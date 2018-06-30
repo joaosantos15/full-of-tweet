@@ -15,8 +15,14 @@ contract Bet {
   mapping (bytes32 => Statement) public statementsList;
   mapping (address => Statement[]) public statementsListByJudge;
 
-  function getStatementsForJudge(address judge) public constant returns(Statement[]){
-	  return statementsListByJudge[judge];
+  function getStatementsForJudgeSize(address judge) public constant returns(uint256){
+	
+	return statementsListByJudge[judge].length;
+  }
+
+  function getStatementForJudge(address judge,uint256 index) public view returns(Statement){
+	
+	return statementsListByJudge[judge][index];
   }
 
   function createStatement(address party2, address judge, bytes32 tweetId) public payable{
