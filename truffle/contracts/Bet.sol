@@ -69,13 +69,19 @@ contract Bet {
 	
 	emit LogConfirmedByJudge(tweetId, _winner);
 
-	// add tie
-
-	// record the winner for history purposes
-	//statementsList[tweetId].winner = _winner;
-	// transfer the funds to the winner
-	//statementsList[tweetId].winner.transfer(statementsList[tweetId].stake);
   }
+ 
+  function judgeSettlesDraw(bytes32 tweetId) public {
+		// confirm bet is confirmed
+		require(statementsList[tweetId].confirmed);
+		//confirm the judge is the one calling the function
+		require(msg.sender == statementsList[tweetId].judge);
+		
+		address party1 = statementsList[tweetId].party1;
+		address party2 = statementsList[tweetId].party2;
+		uint valueToTransfer = statementsList[tweetId].stake/2;
 
-
+		party1.transfer(valueToTransfer);
+		party2.transfer(valueToTransfer);
+	}
 }
