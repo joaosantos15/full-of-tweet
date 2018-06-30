@@ -20,16 +20,20 @@ contract Bet {
 	return statementsListByJudge[judge].length;
   }
 
-  function getStatementForJudge(address judge,uint256 index) public view returns(Statement){
+  function getStatementForJudge(address judge,uint256 index) public view returns(bytes32){
 	
-	return statementsListByJudge[judge][index];
+	return statementsListByJudge[judge][index].tweetId;
   }
 
-  function createStatement(address party2, address judge, bytes32 tweetId) public payable{
+  function createStatement(address party2, address judge, bytes32 tweetId) public payable returns(address, address, address,bytes32, uint,bool){
 	// add msg.value checks
-	statementsList[tweetId] = Statement(msg.sender, party2, judge, tweetId, msg.value,false);
-	statementsListByJudge[judge].push(Statement(msg.sender, party2, judge, tweetId, msg.value,false));
+	Statement memory currStatement = Statement(msg.sender, party2, judge, tweetId, msg.value,false);
+	statementsList[tweetId] = currStatement;
+	statementsListByJudge[judge].push(currStatement);
+
+	return (currStatement.party1, currStatement.party2, currStatement.judge, currStatement.tweetId, currStatement.stake, currStatement.confirmed);
   }
+
 
   function confirmStatement(bytes32 tweetId) public payable{
 	// check it has not been confirmed yet
