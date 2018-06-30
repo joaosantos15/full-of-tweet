@@ -12,6 +12,10 @@ contract Bet {
 	bool confirmed;
   }
 
+ 	event LogStatement(address party1,address party2, address judge);
+  event LogConfirmedByParty2(bytes32 tweetId);
+  event LogConfirmedByJudge(bytes32 tweetId, address _winner);
+
   mapping (bytes32 => Statement) public statementsList;
   mapping (address => Statement[]) public statementsListByJudge;
 
@@ -31,6 +35,8 @@ contract Bet {
 	statementsList[tweetId] = currStatement;
 	statementsListByJudge[judge].push(currStatement);
 
+	emit LogStatement(msg.sender,party2, judge);
+
 	return (currStatement.party1, currStatement.party2, currStatement.judge, currStatement.tweetId, currStatement.stake, currStatement.confirmed);
   }
 
@@ -47,6 +53,7 @@ contract Bet {
 	statementsList[tweetId].stake += msg.value;
 	//confirm the bet
 	statementsList[tweetId].confirmed = true;
+	emit LogConfirmedByParty2(tweetId);
   }
 
   function judgeSettles(bytes32 tweetId, address _winner) public {
@@ -60,6 +67,8 @@ contract Bet {
 	// transfer the funds to the winner
 	_winner.transfer(statementsList[tweetId].stake);
 	
+	emit LogConfirmedByJudge(tweetId, _winner);
+
 	// add tie
 
 	// record the winner for history purposes
