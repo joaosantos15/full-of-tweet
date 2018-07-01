@@ -10,6 +10,7 @@ contract Bet {
 	bytes32 tweetId;
 	uint stake;
 	bool confirmed;
+	bool settled;
   }
 
  	event LogStatement(address party1,address party2, address judge);
@@ -31,7 +32,7 @@ contract Bet {
 
   function createStatement(address party2, address judge, bytes32 tweetId) public payable returns(address, address, address,bytes32, uint,bool){
 	// add msg.value checks
-	Statement memory currStatement = Statement(msg.sender, party2, judge, tweetId, msg.value,false);
+	Statement memory currStatement = Statement(msg.sender, party2, judge, tweetId, msg.value,false,false);
 	statementsList[tweetId] = currStatement;
 	statementsListByJudge[judge].push(currStatement);
 
@@ -64,6 +65,8 @@ contract Bet {
 	//confirm the judge is the one calling the function
 	require(msg.sender == statementsList[tweetId].judge);
 	
+	statementsList[tweetId].settled = true;
+
 	// transfer the funds to the winner
 	_winner.transfer(statementsList[tweetId].stake);
 	
@@ -80,6 +83,8 @@ contract Bet {
 		address party1 = statementsList[tweetId].party1;
 		address party2 = statementsList[tweetId].party2;
 		uint valueToTransfer = statementsList[tweetId].stake/2;
+
+		statementsList[tweetId].settled = true;
 
 		party1.transfer(valueToTransfer);
 		party2.transfer(valueToTransfer);

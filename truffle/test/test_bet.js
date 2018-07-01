@@ -15,64 +15,53 @@ contract('Bet', function (accounts) {
   });
 
   
-  it('Create Statement', function(){
+  it('FUNCTION Create Statement', function(){
     bet = Bet.deployed().then(function(instance) {
       return instance.createStatement(user2,judge,tweetId, {from: user1, value: stake})
     })   
   })
-  
-
- /* 
-  it('Check Balance', function(){
-    var initialBalance = web3.fromWei(web3.eth.getBalance(web3.eth.accounts[5]).toNumber()
-    var bet = Bet.deployed().then(function(instance) { 
-    assert.equal(web3.fromWei(web3.eth.getBalance(web3.eth.accounts[5]).toNumber(), 190);
-    })
-  })
-  */
-
- 
+   
   it('Check Created Statement', function(){
-      bet = Bet.deployed().then(function(instance) {
+      return Bet.deployed().then(function(instance) {
         return instance.statementsList.call(tweetId)
       })
       .then(function(list) {
-      /*  console.log(judge)
-        console.log(list[1])
-        console.log(list);*/
-        assert.equal(judge, list[2]);
-       // assert.equal(list[5], true)
+       assert.isFalse(list[5]) 
+       assert.isFalse(list[6])
     })
   })
 
  
-  it('confirmStatement', function(){
-    var bet = Bet.deployed().then(function(instance) {
+  it('FUNCTION confirmStatement', function(){
+    return Bet.deployed().then(function(instance) {
       return instance.confirmStatement(tweetId, {from: user2, value: stake})
     })   
   })
 
   it('Check Confirmed Statement', function(){
-    bet = Bet.deployed().then(function(instance) {
+    return Bet.deployed().then(function(instance) {
       return instance.statementsList.call(tweetId)
     })
     .then(function(list) {
-      console.log(list)
-      assert.equal(list[5], true)
+      assert.isTrue(list[5])
+      assert.isFalse(list[6])
   })
 })
 
-  it('judgeSettles', function(){
-    var bet = Bet.deployed().then(function(instance) {
+  it('FUNCTION judgeSettles', function(){
+    return Bet.deployed().then(function(instance) {
       return instance.judgeSettles(tweetId,user2, {from: judge})
     })   
   })
 
-
-it('should assert true', function (done) {
-  var test_bet = Bet.deployed()
-  assert.isTrue(true)
-  done()
+  it('Check Settled Statement', function(){
+    return Bet.deployed().then(function(instance) {
+      return instance.statementsList.call(tweetId)
+    })
+    .then(function(list) {
+      assert.isTrue(list[5])
+      assert.isTrue(list[6])
+  })
 })
 
   
